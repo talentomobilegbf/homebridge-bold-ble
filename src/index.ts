@@ -183,6 +183,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
 
   private async setTargetLockState(deviceId: number, value: CharacteristicValue) {
     this.log.info(`setTargetLockState(deviceId: ${deviceId}, value: ${value})`);
+    await this.update(true);
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`SetTargetLockState requested for device ${deviceId}, but no such accessory`);
