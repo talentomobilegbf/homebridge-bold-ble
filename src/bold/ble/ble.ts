@@ -3,6 +3,7 @@ import noble, { Characteristic, Peripheral } from '@abandonware/noble';
 import { BoldApiCommand, BoldApiHandshake } from '../api';
 import { BoldCryptor } from './cryptor';
 import { BoldBleDeviceInfo, BoldBlePacketType, BoldBlePacketTypes } from './types';
+import { Logger } from 'homebridge';
 
 const SESAM_MANUFACTURER_ID = 0x065b;
 const SESAM_SERVICE_UUID = 'fd30';
@@ -30,7 +31,8 @@ class BoldBleConnection {
     private readonly peripheral: Peripheral,
     private readonly writeCharacteristic: Characteristic,
     private readonly readCharacteristic: Characteristic,
-    private readonly signal: AbortSignal
+    private readonly signal: AbortSignal,
+    private readonly log: Logger
   ) {
     if (peripheral.state !== 'connected') {
       throw new Error('Peripheral is not connected');
@@ -154,6 +156,7 @@ class BoldBleConnection {
       };
 
       this.onPacketReceived = (type, payload) => {
+        this.log.info(`Received: ${type} - ${payload}`);
         if (type === BoldBlePacketTypes.Event) {
           // Ignore event packets that can come in the middle of a conversation.
           return;
