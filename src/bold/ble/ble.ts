@@ -355,7 +355,9 @@ export class BoldBle {
     activateCommand: BoldApiCommand,
     timeout: number = DEFAULT_ACTIVATE_TIMEOUT
   ): Promise<number> {
+    console.log('activateLock');
     return this.withEncryptedConnection(peripheral, handshake, timeout, async connection => {
+      console.log(activateCommand.payload);
       const commandPayload = Buffer.from(activateCommand.payload, 'base64');
       const commandAck = await connection.call(
         BoldBlePacketTypes.Command,
