@@ -265,6 +265,7 @@ export class BoldBle {
   ): Promise<Map<number, Peripheral | null>> {
     const peripherals = new Map<number, Peripheral | null>(deviceIds && deviceIds.map(deviceId => [deviceId, null]));
     if (deviceIds && deviceIds.length === 0) {
+      console.log(`Found devices: ${deviceIds}`);
       return peripherals;
     }
 
@@ -280,6 +281,7 @@ export class BoldBle {
         const onDiscover = (peripheral: Peripheral) => {
           try {
             const deviceInfo = this.getDeviceInfo(peripheral);
+            console.log(`Found device: ${deviceInfo}`);
             peripherals.set(deviceInfo.deviceId, peripheral);
             if (deviceIds && !deviceIds.some(deviceId => !peripherals.get(deviceId))) {
               done();
@@ -368,6 +370,7 @@ export class BoldBle {
       }
 
       const activationTime = commandAck.readUInt16LE(1);
+      console.log(`Activation time: ${activationTime}`);
       return activationTime;
     });
   }

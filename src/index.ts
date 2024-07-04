@@ -181,6 +181,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
 
   private async setTargetLockState(deviceId: number, value: CharacteristicValue) {
     const lock = this.locks.get(deviceId);
+    this.log.info(JSON.stringify(lock));
     if (!lock) {
       this.log.warn(`SetTargetLockState requested for device ${deviceId}, but no such accessory`);
       throw new this.homebridge.hap.HapStatusError(HAPStatus.RESOURCE_DOES_NOT_EXIST);
