@@ -141,7 +141,8 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
       .onGet(() => `${device.actualFirmwareVersion || 'Unknown'}`);
   }
 
-  private getCurrentLockState(deviceId: number): Nullable<CharacteristicValue> {
+  private async getCurrentLockState(deviceId: number): Promise<Nullable<CharacteristicValue>> {
+    await this.update(true);
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`GetCurrentLockState requested for device ${deviceId}, but no such accessory`);
@@ -160,7 +161,8 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
     }
   }
 
-  private getTargetLockState(deviceId: number): Nullable<CharacteristicValue> {
+  private async getTargetLockState(deviceId: number): Promise<Nullable<CharacteristicValue>> {
+    await this.update(true);
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`GetTargetLockState requested for device ${deviceId}, but no such accessory`);
