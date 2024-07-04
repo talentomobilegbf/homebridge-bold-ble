@@ -31,9 +31,7 @@ class BoldBleConnection {
     private readonly peripheral: Peripheral,
     private readonly writeCharacteristic: Characteristic,
     private readonly readCharacteristic: Characteristic,
-    private readonly signal: AbortSignal,
-    private readonly log: Logger
-  ) {
+    private readonly signal: AbortSignal ) {
     if (peripheral.state !== 'connected') {
       throw new Error('Peripheral is not connected');
     }
@@ -156,7 +154,7 @@ class BoldBleConnection {
       };
 
       this.onPacketReceived = (type, payload) => {
-        this.log.info(`Received: ${type} - ${payload}`);
+        console.log(`Received: ${type} - ${payload}`);
         if (type === BoldBlePacketTypes.Event) {
           // Ignore event packets that can come in the middle of a conversation.
           return;
