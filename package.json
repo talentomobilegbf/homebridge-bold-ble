@@ -1,7 +1,7 @@
 {
-  "name": "homebridge-bold-ble",
+  "name": "homebridge-bold-ble-debug",
   "version": "1.2.0",
-  "displayName": "Homebridge Bold BLE",
+  "displayName": "Homebridge Bold BLE Debug",
   "description": "Homebridge plugin for Bold Smart Lock",
   "license": "MIT",
   "keywords": [
@@ -11,13 +11,13 @@
     "bold-smart-lock",
     "homekit"
   ],
-  "homepage": "https://github.com/robbertkl/homebridge-bold-ble#readme",
+  "homepage": "https://github.com/talentomobilegbf/homebridge-bold-ble#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/robbertkl/homebridge-bold-ble.git"
+    "url": "https://github.com/talentomobilegbf/homebridge-bold-ble.git"
   },
   "bugs": {
-    "url": "https://github.com/robbertkl/homebridge-bold-ble/issues"
+    "url": "https://github.com/talentomobilegbf/homebridge-bold-ble/issues"
   },
   "engines": {
     "node": ">=14.18.1",
