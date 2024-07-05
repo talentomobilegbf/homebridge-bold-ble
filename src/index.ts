@@ -142,7 +142,6 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async getCurrentLockState(deviceId: number): Promise<Nullable<CharacteristicValue>> {
-    await this.update(true);
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`GetCurrentLockState requested for device ${deviceId}, but no such accessory`);
@@ -162,7 +161,6 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async getTargetLockState(deviceId: number): Promise<Nullable<CharacteristicValue>> {
-    await this.update(true);
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`GetTargetLockState requested for device ${deviceId}, but no such accessory`);
@@ -185,7 +183,6 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
 
   private async setTargetLockState(deviceId: number, value: CharacteristicValue) {
     this.log.info(`setTargetLockState(deviceId: ${deviceId}, value: ${value})`);
-    await this.update(true);
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`SetTargetLockState requested for device ${deviceId}, but no such accessory`);
@@ -249,6 +246,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
     currentState?.updateValue(this.Characteristic.LockTargetState.UNSECURED);
 
     setTimeout(() => {
+      this.log.info('Activation time ended');
       lock.state = 'deactivated';
       currentState?.updateValue(this.Characteristic.LockTargetState.SECURED);
       targetState?.updateValue(this.Characteristic.LockTargetState.SECURED);

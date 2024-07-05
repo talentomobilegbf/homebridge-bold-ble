@@ -3,7 +3,6 @@ import noble, { Characteristic, Peripheral } from '@abandonware/noble';
 import { BoldApiCommand, BoldApiHandshake } from '../api';
 import { BoldCryptor } from './cryptor';
 import { BoldBleDeviceInfo, BoldBlePacketType, BoldBlePacketTypes } from './types';
-import { Logger } from 'homebridge';
 
 const SESAM_MANUFACTURER_ID = 0x065b;
 const SESAM_SERVICE_UUID = 'fd30';
