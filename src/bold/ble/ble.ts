@@ -41,11 +41,43 @@ class BoldBleConnection {
   public static async create(peripheral: Peripheral, signal: AbortSignal): Promise<BoldBleConnection> {
     noble.reset();
     console.log(peripheral.state);
-    if (peripheral.state !== 'disconnected') {
+    /*if (peripheral.state !== 'disconnected') {
       throw new Error('Cannot connect peripheral while it is not yet disconnected');
+    }*/
+
+    if (peripheral.state === 'disconnected') {
+      await runWithTimeout(DEFAULT_ACTIVATE_TIMEOUT, async (signal2) => {
+        await new Promise<void>((resolve, reject) => {
+          const cleanup = () => {
+            peripheral.removeListener('connect', onConnect);
+            signal.removeEventListener('abort', onAbort);
+          };
+
+          const onConnect = () => {
+            console.log('onConnect');
+            cleanup();
+            resolve();
+          };
+
+          const onAbort = () => {
+            // Skip cancelling because cancelConnect() seems broken in noble! :-(
+            // peripheral.cancelConnect();
+            cleanup();
+            reject(new Error('Timed out while connecting'));
+          };
+
+          peripheral.on('connect', onConnect);
+          peripheral.connect();
+
+          if (signal.aborted) {
+            onAbort();
+          }
+          signal.addEventListener('abort', onAbort);
+        });
+      });
     }
 
-    await new Promise<void>((resolve, reject) => {
+    /*await new Promise<void>((resolve, reject) => {
       const cleanup = () => {
         peripheral.removeListener('connect', onConnect);
         signal.removeEventListener('abort', onAbort);
@@ -71,7 +103,7 @@ class BoldBleConnection {
         onAbort();
       }
       signal.addEventListener('abort', onAbort);
-    });
+    });*/
 
     const { characteristics } = await peripheral.discoverAllServicesAndCharacteristicsAsync();
 
@@ -103,8 +135,7 @@ class BoldBleConnection {
       return;
     }
     console.log('Disconnecting');
-    await this.peripheral.disconnectAsync();
-    noble._peripherals = [];
+    //await this.peripheral.disconnectAsync();
   }
 
   private onBytesReceived(data: Buffer, isNotification: boolean) {
