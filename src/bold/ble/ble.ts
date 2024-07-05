@@ -39,6 +39,7 @@ class BoldBleConnection {
   }
 
   public static async create(peripheral: Peripheral, signal: AbortSignal): Promise<BoldBleConnection> {
+    noble.reset();
     if (peripheral.state !== 'disconnected') {
       throw new Error('Cannot connect peripheral while it is not yet disconnected');
     }
@@ -62,7 +63,6 @@ class BoldBleConnection {
       };
 
       peripheral.on('connect', onConnect);
-      peripheral.reset();
       peripheral.connect();
 
       if (signal.aborted) {
