@@ -53,8 +53,8 @@ class BoldBleConnection {
             signal.removeEventListener('abort', onAbort);
           };
 
-          const onConnect = () => {
-            console.log('onConnect');
+          const onConnect = (data) => {
+            console.log('onConnect', data);
             cleanup();
             resolve();
           };
@@ -107,8 +107,6 @@ class BoldBleConnection {
 
     const { characteristics } = await peripheral.discoverAllServicesAndCharacteristicsAsync();
 
-    console.log('characteristics');
-
     let writeCharacteristic: Characteristic | undefined;
     let readCharacteristic: Characteristic | undefined;
     for (const characteristic of characteristics) {
@@ -124,8 +122,6 @@ class BoldBleConnection {
     }
 
     await readCharacteristic.notifyAsync(true);
-
-    console.log('readCharacteristic');
 
     return new this(peripheral, writeCharacteristic, readCharacteristic, signal);
   }

@@ -231,6 +231,9 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
       if (error instanceof Error) {
         const message = error.message;
         this.log.error(`Could not activate lock for device ${deviceId}: ${message}`);
+        lock.state = 'deactivated';
+        currentState?.updateValue(this.Characteristic.LockTargetState.SECURED);
+        targetState?.updateValue(this.Characteristic.LockTargetState.SECURED);
         if (message.match(/time(d )?out/i)) {
           hapStatus = HAPStatus.OPERATION_TIMED_OUT;
         } else if (message.match(/not yet disconnected/i)) {
