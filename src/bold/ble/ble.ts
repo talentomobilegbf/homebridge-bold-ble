@@ -52,6 +52,7 @@ class BoldBleConnection {
       };
 
       const onConnect = () => {
+        console.log('onConnect');
         cleanup();
         resolve();
       };
@@ -74,6 +75,8 @@ class BoldBleConnection {
 
     const { characteristics } = await peripheral.discoverAllServicesAndCharacteristicsAsync();
 
+    console.log('characteristics');
+
     let writeCharacteristic: Characteristic | undefined;
     let readCharacteristic: Characteristic | undefined;
     for (const characteristic of characteristics) {
@@ -89,6 +92,8 @@ class BoldBleConnection {
     }
 
     await readCharacteristic.notifyAsync(true);
+
+    console.log('readCharacteristic');
 
     return new this(peripheral, writeCharacteristic, readCharacteristic, signal);
   }
