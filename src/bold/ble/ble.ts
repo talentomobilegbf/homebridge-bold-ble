@@ -102,10 +102,13 @@ class BoldBleConnection {
     if (this.peripheral.state === 'disconnected') {
       return;
     }
+    console.log('Disconnecting');
     await this.peripheral.disconnectAsync();
+    noble._peripherals = [];
   }
 
   private onBytesReceived(data: Buffer, isNotification: boolean) {
+    console.log('onBytesReceived', data);
     if (!isNotification) {
       return;
     }
