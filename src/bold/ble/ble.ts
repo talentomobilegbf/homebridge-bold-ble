@@ -62,6 +62,7 @@ class BoldBleConnection {
       };
 
       peripheral.on('connect', onConnect);
+      peripheral.reset();
       peripheral.connect();
 
       if (signal.aborted) {
@@ -335,6 +336,7 @@ export class BoldBle {
   ) {
     return runWithTimeout(timeout, async signal => {
       const connection = await BoldBleConnection.create(peripheral, signal);
+      console.log(connection);
       await connection.performHandshake(handshake);
 
       try {
