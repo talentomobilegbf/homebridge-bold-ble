@@ -29,7 +29,7 @@ const PLATFORM_NAME = 'BoldBLE';
 const PLUGIN_NAME = 'homebridge-bold-ble';
 
 const HOUR = 60 * 60 * 1000;
-const UPDATE_INTERVAL = 1 * HOUR;
+const UPDATE_INTERVAL = 0.15 * HOUR;
 const DEVICES_UDPATE_INTERVAL = 24 * HOUR;
 const HANDSHAKE_UPDATE_MARGIN = 24 * HOUR;
 const COMMAND_UPDATE_MARGIN = 24 * HOUR;
