@@ -214,9 +214,6 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
       throw new this.homebridge.hap.HapStatusError(HAPStatus.NOT_ALLOWED_IN_CURRENT_STATE);
     }
 
-    lock.state = 'activating';
-    targetState?.updateValue(this.Characteristic.LockTargetState.UNSECURED);
-
     if (!this.ble) {
       this.log.error(`Cannot activate lock for device ${deviceId} because Bluetooth library was not loaded`);
       throw new this.homebridge.hap.HapStatusError(HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -225,6 +222,8 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
     let activationTime: number;
     try {
       activationTime = await this.ble.activateLock(lock.peripheral, lock.handshake, lock.activateCommand);
+      lock.state = 'activating';
+      targetState?.updateValue(this.Characteristic.LockTargetState.UNSECURED);
       this.log.info(`Activated lock for device ${deviceId}, will auto-deactivate after ${activationTime}s`);
     } catch (error: unknown) {
       let hapStatus = HAPStatus.SERVICE_COMMUNICATION_FAILURE;
