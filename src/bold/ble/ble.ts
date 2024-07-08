@@ -245,9 +245,8 @@ class BoldBleConnection {
 
 export class BoldBle {
   private async waitForBluetooth(signal: AbortSignal) {
-    console.log('waitForBluetooth');
+    console.log('waitForBluetooth', noble.state);
     if (noble.state === 'poweredOn') {
-      console.log('waitForBluetooth', noble.state);
       return;
     }
 
@@ -258,6 +257,7 @@ export class BoldBle {
       };
 
       const onStateChange = (state: string) => {
+        console.log('waitForBluetooth - onStateChange', state);
         if (state === 'poweredOn') {
           cleanup();
           resolve();
@@ -265,6 +265,7 @@ export class BoldBle {
       };
 
       const onAbort = () => {
+        console.log('waitForBluetooth - onAbort');
         cleanup();
         reject(new Error('Timed out while waiting for Bluetooth to turn on'));
       };
