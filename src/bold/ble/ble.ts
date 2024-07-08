@@ -300,6 +300,7 @@ export class BoldBle {
         };
 
         const onDiscover = (peripheral: Peripheral) => {
+          console.log('onDiscover');
           try {
             const deviceInfo = this.getDeviceInfo(peripheral);
             console.log(`Found device: ${deviceInfo}`);
@@ -307,7 +308,8 @@ export class BoldBle {
             if (deviceIds && !deviceIds.some(deviceId => !peripherals.get(deviceId))) {
               done();
             }
-          } catch (error: unknown) {
+          } catch (error) {
+            console.log(error);
             // Ignore Bold peripheral with invalid manufacturer data.
           }
         };
