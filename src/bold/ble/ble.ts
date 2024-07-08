@@ -301,10 +301,10 @@ export class BoldBle {
     timeout = DEFAULT_DISCOVER_TIMEOUT
   ): Promise<Map<number, Peripheral | null>> {
     const peripherals = new Map<number, Peripheral | null>(deviceIds && deviceIds.map(deviceId => [deviceId, null]));
-    if (deviceIds && deviceIds.length === 0) {
+    /*if (deviceIds && deviceIds.length === 0) {
       console.log(`Found devices: ${deviceIds}`);
       return peripherals;
-    }
+    }*/
 
     return runWithTimeout(timeout, async signal => {
       await this.waitForBluetooth(signal);
