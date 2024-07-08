@@ -329,6 +329,7 @@ export class BoldBle {
   public getDeviceInfo(peripheral: Peripheral): BoldBleDeviceInfo {
     console.log(`getDeviceInfo: ${peripheral}`);
     const data = peripheral.advertisement.manufacturerData;
+    console.log(`Manufacturer data: ${data.toString()}`);
 
     if (data.length !== 14) {
       throw new Error('Incorrect length of manufacturer data');
