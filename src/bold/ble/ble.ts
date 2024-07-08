@@ -323,7 +323,7 @@ export class BoldBle {
   }
 
   public getDeviceInfo(peripheral: Peripheral): BoldBleDeviceInfo {
-    console.log('getDeviceInfo');
+    console.log('getDeviceInfo', JSON.stringify(peripheral));
     const data = peripheral.advertisement.manufacturerData;
 
     if (data.length !== 14) {
