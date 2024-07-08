@@ -38,7 +38,7 @@ class BoldBleConnection {
     this.readCharacteristic.on('read', this.onBytesReceived.bind(this));
   }
 
-  public static async create(peripheral: Peripheral, signal: AbortSignal): Promise<BoldBleConnection> {
+  public static async create(peripheral: Peripheral, signal: AbortSignal): Promise<BoldBleConnection | undefined> {
     noble.reset();
     console.log(peripheral.state);
     /*if (peripheral.state !== 'disconnected') {
@@ -77,53 +77,29 @@ class BoldBleConnection {
       });
     }
 
-    /*await new Promise<void>((resolve, reject) => {
-      const cleanup = () => {
-        peripheral.removeListener('connect', onConnect);
-        signal.removeEventListener('abort', onAbort);
-      };
+    await runWithTimeout(DEFAULT_ACTIVATE_TIMEOUT, async (signal) => {
+      const { characteristics } = await peripheral.discoverAllServicesAndCharacteristicsAsync();
 
-      const onConnect = () => {
-        console.log('onConnect');
-        cleanup();
-        resolve();
-      };
-
-      const onAbort = () => {
-        // Skip cancelling because cancelConnect() seems broken in noble! :-(
-        // peripheral.cancelConnect();
-        cleanup();
-        reject(new Error('Timed out while connecting'));
-      };
-
-      peripheral.on('connect', onConnect);
-      peripheral.connect();
-
-      if (signal.aborted) {
-        onAbort();
+      let writeCharacteristic: Characteristic | undefined;
+      let readCharacteristic: Characteristic | undefined;
+      for (const characteristic of characteristics) {
+        if (characteristic.uuid === NORDIC_UART_RX_CHARACTERISTIC_UUID.replace(/-/g, '').toLowerCase()) {
+          writeCharacteristic = characteristic;
+        } else if (characteristic.uuid === NORDIC_UART_TX_CHARACTERISTIC_UUID.replace(/-/g, '').toLowerCase()) {
+          readCharacteristic = characteristic;
+        }
       }
-      signal.addEventListener('abort', onAbort);
-    });*/
 
-    const { characteristics } = await peripheral.discoverAllServicesAndCharacteristicsAsync();
-
-    let writeCharacteristic: Characteristic | undefined;
-    let readCharacteristic: Characteristic | undefined;
-    for (const characteristic of characteristics) {
-      if (characteristic.uuid === NORDIC_UART_RX_CHARACTERISTIC_UUID.replace(/-/g, '').toLowerCase()) {
-        writeCharacteristic = characteristic;
-      } else if (characteristic.uuid === NORDIC_UART_TX_CHARACTERISTIC_UUID.replace(/-/g, '').toLowerCase()) {
-        readCharacteristic = characteristic;
+      if (!writeCharacteristic || !readCharacteristic) {
+        throw new Error('Could not find Nordic UART characteristics on peripheral');
       }
-    }
 
-    if (!writeCharacteristic || !readCharacteristic) {
-      throw new Error('Could not find Nordic UART characteristics on peripheral');
-    }
+      await readCharacteristic.notifyAsync(true);
 
-    await readCharacteristic.notifyAsync(true);
+      return new this(peripheral, writeCharacteristic, readCharacteristic, signal);
+    });
 
-    return new this(peripheral, writeCharacteristic, readCharacteristic, signal);
+    return undefined;
   }
 
   public async disconnect() {
@@ -373,15 +349,19 @@ export class BoldBle {
     return runWithTimeout(timeout, async signal => {
       const connection = await BoldBleConnection.create(peripheral, signal);
       console.log(connection);
-      await connection.performHandshake(handshake);
+      if (connection) {
+        await connection.performHandshake(handshake);
 
-      try {
-        if (signal.aborted) {
-          throw new Error('Timed out after handshake');
+        try {
+          if (signal.aborted) {
+            throw new Error('Timed out after handshake');
+          }
+          return await func(connection);
+        } finally {
+          await connection.disconnect();
         }
-        return await func(connection);
-      } finally {
-        await connection.disconnect();
+      } else {
+        return 0;
       }
     });
   }
