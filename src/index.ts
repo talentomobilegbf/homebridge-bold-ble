@@ -142,6 +142,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async getCurrentLockState(deviceId: number): Promise<Nullable<CharacteristicValue>> {
+    await this.updateDevices(true);
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`GetCurrentLockState requested for device ${deviceId}, but no such accessory`);
