@@ -39,11 +39,12 @@ class BoldBleConnection {
   }
 
   public static async create(peripheral: Peripheral, signal: AbortSignal): Promise<BoldBleConnection | undefined> {
+    console.log('create');
     noble.reset();
     console.log(peripheral.state);
-    /*if (peripheral.state !== 'disconnected') {
+    if (peripheral.state !== 'disconnected') {
       throw new Error('Cannot connect peripheral while it is not yet disconnected');
-    }*/
+    }
 
     if (peripheral.state === 'disconnected') {
       await runWithTimeout(DEFAULT_ACTIVATE_TIMEOUT, async (signal2) => {
@@ -103,6 +104,7 @@ class BoldBleConnection {
   }
 
   public async disconnect() {
+    console.log('disconnect');
     if (this.peripheral.state === 'disconnected') {
       return;
     }
@@ -143,6 +145,7 @@ class BoldBleConnection {
   private onPacketReceived: ((type: BoldBlePacketType, payload: Buffer) => void) | undefined;
 
   public async call(type: BoldBlePacketType, payload: Buffer, replyType: BoldBlePacketType): Promise<Buffer> {
+    console.log('call');
     let processReply = (reply: Buffer): Buffer | Promise<Buffer> => reply;
 
     if (type < BoldBlePacketTypes.StartHandshake || type > BoldBlePacketTypes.HandshakeFinishedResponse) {
@@ -207,6 +210,7 @@ class BoldBleConnection {
   }
 
   public async performHandshake(handshake: BoldApiHandshake) {
+    console.log('performHandshake');
     const handshakePayload = Buffer.from(handshake.payload, 'base64');
     const handshakeKey = Buffer.from(handshake.handshakeKey, 'base64');
 
@@ -241,6 +245,7 @@ class BoldBleConnection {
 
 export class BoldBle {
   private async waitForBluetooth(signal: AbortSignal) {
+    console.log('waitForBluetooth');
     if (noble.state === 'poweredOn') {
       return;
     }
@@ -276,11 +281,12 @@ export class BoldBle {
     deviceIds?: number[],
     timeout = DEFAULT_DISCOVER_TIMEOUT
   ): Promise<Map<number, Peripheral | null>> {
+    console.log('discoverBoldPeripherals', deviceIds);
     const peripherals = new Map<number, Peripheral | null>(deviceIds && deviceIds.map(deviceId => [deviceId, null]));
-    /*if (deviceIds && deviceIds.length === 0) {
+    if (deviceIds && deviceIds.length === 0) {
       console.log(`Found devices: ${deviceIds}`);
       return peripherals;
-    }*/
+    }
 
     return runWithTimeout(timeout, async signal => {
       await this.waitForBluetooth(signal);
@@ -310,12 +316,14 @@ export class BoldBle {
         signal.addEventListener('abort', done);
 
         noble.on('discover', onDiscover);
-        noble.startScanning([SESAM_SERVICE_UUID], false);
+        //noble.startScanning([SESAM_SERVICE_UUID], false);
+        noble.startScanning();
       });
     });
   }
 
   public getDeviceInfo(peripheral: Peripheral): BoldBleDeviceInfo {
+    console.log('getDeviceInfo');
     const data = peripheral.advertisement.manufacturerData;
 
     if (data.length !== 14) {
@@ -346,6 +354,7 @@ export class BoldBle {
     timeout: number,
     func: (connection: BoldBleConnection) => T
   ) {
+    console.log('withEncryptedConnection');
     return runWithTimeout(timeout, async signal => {
       const connection = await BoldBleConnection.create(peripheral, signal);
       console.log(connection);

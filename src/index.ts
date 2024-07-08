@@ -142,7 +142,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async getCurrentLockState(deviceId: number): Promise<Nullable<CharacteristicValue>> {
-    await this.updateDevices(true);
+    console.log('getCurrentLockState');
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`GetCurrentLockState requested for device ${deviceId}, but no such accessory`);
@@ -162,6 +162,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async getTargetLockState(deviceId: number): Promise<Nullable<CharacteristicValue>> {
+    console.log('getTargetLockState');
     const lock = this.locks.get(deviceId);
     if (!lock) {
       this.log.warn(`GetTargetLockState requested for device ${deviceId}, but no such accessory`);
@@ -257,6 +258,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async fetchCompatibleDevices(): Promise<Map<number, BoldApiDevice>> {
+    console.log('fetchCompatibleDevices');
     const potentialDevices = (await this.api?.getEffectiveDevicePermissions()) ?? [];
     const devices = new Map<number, BoldApiDevice>();
     for (const device of potentialDevices) {
@@ -276,6 +278,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async discoverCompatiblePeripherals(deviceIds: number[]): Promise<Map<number, Peripheral>> {
+    console.log('discoverCompatiblePeripherals');
     const peripherals = new Map<number, Peripheral>();
     if (!this.ble) {
       return peripherals;
@@ -339,6 +342,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async update(force = false) {
+    console.log('update');
     try {
       await this.updateDevices(force);
     } catch (error: unknown) {
@@ -365,6 +369,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async updateDevices(forceUpdate = false) {
+    console.log('updateDevices');
     if (
       !forceUpdate &&
       this.lastDevicesCheck &&
@@ -420,6 +425,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async discoverPeripherals() {
+    console.log('discoverPeripherals');
     // Discovered peripherals for configured accessories for which we don't have a peripheral.
     // This happens when Homebridge starts and restores previously added accessories from cache.
     const deviceIds = Array.from(this.locks.entries())
@@ -436,6 +442,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async updateHandshakes(forceUpdate = false) {
+    console.log('updateHandshakes');
     for (const [deviceId, lock] of this.locks) {
       if (
         forceUpdate ||
@@ -459,6 +466,7 @@ class BoldBlePlatform implements DynamicPlatformPlugin {
   }
 
   private async updateCommands(forceUpdate = false) {
+    console.log('updateCommands');
     for (const [deviceId, lock] of this.locks) {
       if (
         forceUpdate ||
