@@ -247,6 +247,7 @@ export class BoldBle {
   private async waitForBluetooth(signal: AbortSignal) {
     console.log('waitForBluetooth');
     if (noble.state === 'poweredOn') {
+      console.log('waitForBluetooth', noble.state);
       return;
     }
 
